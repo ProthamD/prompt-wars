@@ -88,11 +88,13 @@ export default function LoginPage() {
           className="glass-card p-7"
         >
           {/* Mode tabs */}
-          <div className="flex rounded-xl bg-surface-muted p-1 mb-6 gap-1">
+          <div role="tablist" aria-label="Authentication mode" className="flex rounded-xl bg-surface-muted p-1 mb-6 gap-1">
             {(['login', 'signup'] as const).map((m) => (
               <button
                 key={m}
                 type="button"
+                role="tab"
+                aria-selected={mode === m}
                 onClick={() => switchMode(m)}
                 className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-200
                   ${mode === m
@@ -144,7 +146,8 @@ export default function LoginPage() {
 
             {/* Email */}
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" aria-hidden="true" />
+              <label htmlFor="input-email" className="sr-only">Email address</label>
               <input
                 id="input-email"
                 type="email"
@@ -152,6 +155,9 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                aria-required="true"
+                aria-label="Email address"
+                autoComplete="email"
                 className="w-full bg-surface-muted border border-surface-border rounded-xl
                            py-3 pl-10 pr-4 text-sm text-white placeholder-slate-600
                            focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/30
@@ -161,7 +167,8 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" aria-hidden="true" />
+              <label htmlFor="input-password" className="sr-only">Password</label>
               <input
                 id="input-password"
                 type={showPass ? 'text' : 'password'}
@@ -169,6 +176,9 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                aria-required="true"
+                aria-label="Password"
+                autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                 minLength={mode === 'signup' ? 8 : 1}
                 className="w-full bg-surface-muted border border-surface-border rounded-xl
                            py-3 pl-10 pr-10 text-sm text-white placeholder-slate-600
@@ -177,10 +187,11 @@ export default function LoginPage() {
               />
               <button
                 type="button"
+                aria-label={showPass ? 'Hide password' : 'Show password'}
                 onClick={() => setShowPass(!showPass)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
-                {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPass ? <EyeOff className="w-4 h-4" aria-hidden="true" /> : <Eye className="w-4 h-4" aria-hidden="true" />}
               </button>
             </div>
 
