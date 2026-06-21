@@ -67,6 +67,19 @@ export const MANUAL_FACTORS = {
 
 // ─── Calculation Functions ────────────────────────────────────────────────────
 
+/**
+ * Computes the user's annual carbon footprint baseline in kg CO₂e
+ * based on their onboarding answers.
+ *
+ * Emission factors sourced from DEFRA 2023 and EPA EEIO.
+ *
+ * @param answers - The user's onboarding survey answers
+ * @returns Annual footprint in kg CO₂e, rounded to one decimal place
+ *
+ * @example
+ * computeBaselineFootprint({ dietType: 'vegan', transportMode: 'walk_bike', energySource: 'renewable', homeSqFt: 'medium' })
+ * // → 2000
+ */
 export function computeBaselineFootprint(answers: OnboardingAnswers): number {
   const diet      = DIET_KG_PER_YEAR[answers.dietType] ?? 2_800;
   const transport = TRANSPORT_KG_PER_YEAR[answers.transportMode] ?? 3_500;
@@ -76,6 +89,13 @@ export function computeBaselineFootprint(answers: OnboardingAnswers): number {
   return Math.round((diet + transport + energy * sizeMulti) * 10) / 10;
 }
 
+/**
+ * Aggregates footprint records into monthly buckets over a trailing window.
+ *
+ * @param records - Array of footprint records with ISO date strings
+ * @param monthsBack - Number of months to look back (default: 6)
+ * @returns Array of { month: string, co2eKg: number } sorted chronologically
+ */
 export function getMonthlyRecords(records: { date: string; co2eKg: number }[], monthsBack = 6) {
   const now = new Date();
   const buckets: Record<string, number> = {};
@@ -94,6 +114,13 @@ export function getMonthlyRecords(records: { date: string; co2eKg: number }[], m
   return Object.entries(buckets).map(([month, co2eKg]) => ({ month, co2eKg: Math.round(co2eKg * 10) / 10 }));
 }
 
+/**
+ * Aggregates footprint records by the 4 standard categories:
+ * food, transport, energy, shopping.
+ *
+ * @param records - Array of footprint records
+ * @returns Array of { category: string, co2eKg: number }
+ */
 export function getCategoryTotals(records: { category: string; co2eKg: number }[]) {
   const totals: Record<string, number> = { food: 0, transport: 0, energy: 0, shopping: 0 };
   for (const r of records) {
@@ -105,10 +132,23 @@ export function getCategoryTotals(records: { category: string; co2eKg: number }[
   }));
 }
 
+/** Converts kg CO₂e to equivalent number of trees planted for one year (1 tree ≈ 21 kg CO₂e/yr). */
 export function co2eToTrees(kg: number) { return Math.round(kg / 21); }
+
+/** Converts kg CO₂e to equivalent number of long-haul flights (≈ 1,100 kg CO₂e per flight). */
 export function co2eToFlights(kg: number) { return Math.round((kg / 1_100) * 10) / 10; }
+
+/** Converts kg CO₂e to equivalent km driven in an average petrol car (≈ 184g CO₂e/km). */
 export function co2eToDrivingKm(kg: number) { return Math.round(kg / 0.184); }
 
+/**
+ * Estimates what income-bracket percentile the user's footprint falls in.
+ * Uses a normal-distribution approximation (σ = 35% of bracket mean).
+ *
+ * @param userKgYear - User's annual footprint in kg CO₂e
+ * @param bracket - Income bracket key from PEER_AVERAGE_BY_INCOME
+ * @returns Percentile (1–99), where 99 = highest emitter in bracket
+ */
 export function peerPercentile(userKgYear: number, bracket: string): number {
   const avg = PEER_AVERAGE_BY_INCOME[bracket] ?? 9_000;
   // Simple normal-distribution percentile approximation
