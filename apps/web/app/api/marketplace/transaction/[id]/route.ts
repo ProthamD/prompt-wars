@@ -4,16 +4,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const client = await clientPromise;
     const db = client.db('terraprint');
     
-    if (!ObjectId.isValid(params.id)) {
+    if (!ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
     }
 
-    const tx = await db.collection('transactions').findOne({ _id: new ObjectId(params.id) });
+    const tx = await db.collection('transactions').findOne({ _id: new ObjectId(id) });
     
     if (!tx) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });

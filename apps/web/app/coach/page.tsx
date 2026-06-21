@@ -4,14 +4,14 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Send, Bot, User, Sparkles } from 'lucide-react';
-import { useStore } from '@/lib/store';
+import { useStore, FootprintRecord, UserProfile } from '@/lib/store';
 import { getCategoryTotals, getMonthlyRecords } from '@/lib/emissions';
 
 // ── Local AI Coach (no API key needed for demo) ─────────────────────────────
 // In production this calls FastAPI /api/v1/coach with RAG + GPT-4o-mini.
 // For demo, we use a rule-based responder grounded on the user's actual store data.
 
-function buildContext(records: ReturnType<typeof useStore>['records'], user: ReturnType<typeof useStore>['user']) {
+function buildContext(records: FootprintRecord[], user: UserProfile | null) {
   const totals = getCategoryTotals(records);
   const monthly = getMonthlyRecords(records, 6);
   const topCat = [...totals].sort((a, b) => b.co2eKg - a.co2eKg)[0];

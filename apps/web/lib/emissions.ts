@@ -114,7 +114,7 @@ export function peerPercentile(userKgYear: number, bracket: string): number {
   // Simple normal-distribution percentile approximation
   const sigma = avg * 0.35;
   const z = (userKgYear - avg) / sigma;
-  return Math.max(1, Math.min(99, Math.round(50 * (1 + Math.erf ? Math.erf(z / Math.sqrt(2)) : z * 0.4))));
+  return Math.max(1, Math.min(99, Math.round(50 * (1 + ((Math as any).erf ? (Math as any).erf(z / Math.sqrt(2)) : z * 0.4)))));
 }
 
 // Seed demo data for the demo dashboard

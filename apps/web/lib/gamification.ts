@@ -29,6 +29,7 @@ interface GamificationState {
   recordActivity: () => void;
   completeAction: (actionId: string) => void;
   getBadges: () => Badge[];
+  _awardBadge: (id: string) => void;
 }
 
 const ALL_BADGES: Badge[] = [

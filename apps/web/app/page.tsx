@@ -79,12 +79,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-hero-glow pointer-events-none" />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-500/5 rounded-full blur-3xl pointer-events-none" />
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="relative max-w-3xl"
-        >
+        <div className="relative max-w-3xl animate-slide-up">
           <div className="inline-flex items-center gap-2 text-xs font-semibold text-brand-400 bg-brand-500/10 border border-brand-500/20 rounded-full px-3 py-1 mb-6">
             <span className="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse" />
             Friction-free carbon tracking — now in beta
@@ -112,22 +107,17 @@ export default function LandingPage() {
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="relative mt-20 flex flex-wrap justify-center gap-10"
-        >
+        <div className="relative mt-20 flex flex-wrap justify-center gap-10 opacity-0 animate-[slideUp_0.5s_ease-out_0.3s_forwards]">
           {stats.map((s) => (
             <div key={s.label} className="text-center">
               <div className="text-3xl font-black text-gradient">{s.value}</div>
               <div className="text-sm text-slate-500 mt-1">{s.label}</div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* Features */}
