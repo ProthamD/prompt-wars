@@ -3,6 +3,7 @@ Terraprint FastAPI — main application entry point
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from .core.config import settings
 from .routers import footprint, coach, ingestion, marketplace, scanner, nudge
@@ -20,6 +21,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 app.include_router(footprint.router,   prefix="/api/v1/footprint",   tags=["footprint"])
 app.include_router(coach.router,       prefix="/api/v1/coach",        tags=["coach"])

@@ -10,6 +10,8 @@ const options: MongoClientOptions = {
   serverSelectionTimeoutMS: 10000, // 10s to find a server
   connectTimeoutMS: 10000,         // 10s to establish connection
   socketTimeoutMS: 30000,          // 30s for operations
+  maxPoolSize: 10,                 // Throttle max connections for serverless
+  minPoolSize: 1,                  // Keep at least 1 connection alive
 };
 
 let client: MongoClient;
