@@ -1,9 +1,9 @@
 import { MongoClient, MongoClientOptions } from 'mongodb';
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/fallback";
 
-if (!uri) {
-  throw new Error('Missing environment variable: MONGODB_URI');
+if (!process.env.MONGODB_URI) {
+  console.warn('⚠️ Missing environment variable: MONGODB_URI (Using fallback for build)');
 }
 
 const options: MongoClientOptions = {
