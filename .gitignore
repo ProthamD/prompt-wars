@@ -1,0 +1,13 @@
+node_modules/
+.next/
+__pycache__/
+*.pyc
+.env
+.env.local
+.env.*.local
+dist/
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.turbo/

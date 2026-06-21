@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand:   59 130 246;
+    --accent:  139 92 246;
+    --surface: 5 7 20;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: #050714;
+    color: #f1f5f9;
+    font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    /* Subtle animated noise grain for depth */
+    background-image:
+      radial-gradient(ellipse 120% 80% at 70% -20%, rgba(59,130,246,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 60% at 20% 80%,  rgba(139,92,246,0.08) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  /* Premium scrollbar */
+  ::-webkit-scrollbar       { width: 5px; }
+  ::-webkit-scrollbar-track { background: #050714; }
+  ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.6); }
+
+  /* Selection colour */
+  ::selection { background: rgba(59,130,246,0.35); color: #fff; }
+}
+
+@layer components {
+
+  /* ─── Glass card ─────────────────────────────────────────────────── */
+  .glass-card {
+    @apply relative rounded-2xl border;
+    background: linear-gradient(
+      145deg,
+      rgba(9, 13, 31, 0.9) 0%,
+      rgba(15, 22, 48, 0.6) 100%
+    );
+    border-color: rgba(59, 130, 246, 0.12);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(145deg, rgba(59,130,246,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ─── Primary button ─────────────────────────────────────────────── */
+  .btn-primary {
+    @apply relative overflow-hidden font-semibold px-6 py-3 rounded-xl text-white
+           transition-all duration-200 ease-out active:scale-[0.97] cursor-pointer
+           inline-flex items-center justify-center;
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    box-shadow: 0 0 0 0 rgba(59,130,246,0.5);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 0 28px rgba(59,130,246,0.45), 0 4px 16px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+  .btn-primary:hover::after { opacity: 1; }
+
+  /* ─── Ghost button ───────────────────────────────────────────────── */
+  .btn-ghost {
+    @apply border font-medium px-5 py-2.5 rounded-xl transition-all duration-200
+           text-slate-300 hover:text-white cursor-pointer inline-flex items-center justify-center;
+    border-color: rgba(59,130,246,0.2);
+    background: rgba(59,130,246,0.04);
+  }
+  .btn-ghost:hover {
+    border-color: rgba(59,130,246,0.5);
+    background: rgba(59,130,246,0.1);
+    box-shadow: 0 0 16px rgba(59,130,246,0.15);
+  }
+
+  /* ─── Stat card ──────────────────────────────────────────────────── */
+  .stat-card {
+    @apply glass-card p-6 flex flex-col gap-2;
+  }
+
+  /* ─── Category pill ──────────────────────────────────────────────── */
+  .category-pill {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full;
+  }
+
+  /* ─── Nav link active ────────────────────────────────────────────── */
+  .nav-active {
+    background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(99,102,241,0.1) 100%);
+    border-color: rgba(59,130,246,0.25);
+    color: #93c5fd;
+  }
+}
+
+@layer utilities {
+
+  /* ─── Text gradient: blue → violet ──────────────────────────────── */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #60a5fa 0%, #a78bfa 60%, #22d3ee 100%);
+  }
+
+  /* ─── Text gradient: simpler blue ───────────────────────────────── */
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #93c5fd 0%, #3b82f6 100%);
+  }
+
+  /* ─── Glows ──────────────────────────────────────────────────────── */
+  .glow-brand {
+    box-shadow: 0 0 32px rgba(59,130,246,0.4), 0 0 80px rgba(59,130,246,0.1);
+  }
+
+  .border-brand-glow {
+    border-color: rgba(59,130,246,0.35) !important;
+    box-shadow: 0 0 0 1px rgba(59,130,246,0.12), 0 4px 24px rgba(59,130,246,0.1);
+  }
+
+  /* ─── Shimmer loading ────────────────────────────────────────────── */
+  .shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.08) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  /* ─── Chart tooltip override ─────────────────────────────────────── */
+  .recharts-tooltip-wrapper { outline: none !important; }
+
+  /* ─── Pricing card highlight ─────────────────────────────────────── */
+  .pricing-popular {
+    background: linear-gradient(
+      145deg,
+      rgba(59,130,246,0.14) 0%,
+      rgba(139,92,246,0.08) 100%
+    );
+    border-color: rgba(59,130,246,0.4) !important;
+    box-shadow:
+      0 0 0 1px rgba(59,130,246,0.2),
+      0 8px 40px rgba(59,130,246,0.2),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+}
