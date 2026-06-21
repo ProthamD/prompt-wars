@@ -1,11 +1,13 @@
 from pydantic_settings import BaseSettings
+from typing import List
+import json
 
 
 class Settings(BaseSettings):
     # App
     APP_ENV: str = "development"
     SECRET_KEY: str = "change-me-in-production"
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: str = "http://localhost:3000"
 
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/terraprint"
@@ -27,6 +29,17 @@ class Settings(BaseSettings):
     GROQ_API_KEY: str = ""
 
     model_config = {"env_file": ".env", "case_sensitive": True}
+
+    def get_cors_origins(self) -> List[str]:
+        """Parse CORS_ORIGINS whether it's a JSON array or a comma-separated string."""
+        val = self.CORS_ORIGINS.strip()
+        if val.startswith("["):
+            try:
+                return json.loads(val)
+            except json.JSONDecodeError:
+                pass
+        # Fallback: treat as comma-separated
+        return [origin.strip() for origin in val.split(",") if origin.strip()]
 
 
 settings = Settings()
