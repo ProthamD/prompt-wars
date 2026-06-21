@@ -110,7 +110,7 @@ export const useGamification = create<GamificationState>()(
           ),
         }));
       },
-    } as any),
+    } satisfies GamificationState),
     { name: 'terraprint-gamification' }
   )
 );

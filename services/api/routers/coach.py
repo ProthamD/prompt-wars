@@ -1,10 +1,16 @@
 """
 AI Coach router — RAG-based carbon coaching endpoint.
-In production: LangChain + Pinecone vector store + GPT-4o-mini.
-Guardrailed against greenwashing and unverified claims.
+
+This module provides the conversational AI interface that helps users
+understand their carbon footprint and suggests actionable reductions.
+It acts as a supportive, evidence-based guide rather than a shaming tool.
+
+In production: LangChain + MongoDB chat history + Groq (LLaMA3-8b).
+Guardrailed against greenwashing by strictly grounding responses in
+verified emission factors (DEFRA, EPA, Climatiq) and the user's own data.
 """
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 from core.config import settings
@@ -13,15 +19,23 @@ router = APIRouter()
 
 
 class CoachRequest(BaseModel):
-    user_id: str
-    message: str
-    conversation_history: Optional[list[dict]] = []
+    """Input schema for a user message to the AI Carbon Coach."""
+    user_id: str = Field(..., description="Unique identifier of the authenticated user")
+    message: str = Field(..., description="The user's chat message or question")
+    conversation_history: Optional[list[dict]] = Field(
+        default=[], description="Optional context of previous messages"
+    )
 
 
 class CoachResponse(BaseModel):
-    reply: str
-    sources: list[str] = []
-    confidence: float = 1.0
+    """Output schema for the AI coach's reply."""
+    reply: str = Field(..., description="The AI's response text in markdown format")
+    sources: list[str] = Field(
+        default=[], description="List of scientific sources cited (e.g. 'DEFRA 2023')"
+    )
+    confidence: float = Field(
+        default=1.0, ge=0.0, le=1.0, description="Confidence score of the emission data provided"
+    )
 
 
 SYSTEM_PROMPT = """You are Terraprint's AI Carbon Coach. You are grounded, empathetic, and evidence-based.
@@ -39,11 +53,21 @@ Format: plain text. Use ** for bold emphasis. Use numbered lists for actions.
 
 
 @router.post("/", response_model=CoachResponse)
-async def coach_chat(req: CoachRequest):
+async def coach_chat(req: CoachRequest) -> CoachResponse:
     """
     RAG-based coaching endpoint.
-    Phase 1: Returns a structured rule-based response (no LLM cost).
-    Phase 3: Switch to LangChain RAG with Pinecone + GPT-4o-mini.
+
+    Takes a user's question, retrieves their conversation history from MongoDB,
+    and streams the prompt through LLaMA3 via Groq to generate an empathetic,
+    actionable carbon-reduction tip.
+
+    Falls back to a rule-based engine if the Groq API key is missing (e.g. local dev).
+
+    Args:
+        req: CoachRequest containing the user's ID and message.
+
+    Returns:
+        CoachResponse with the reply text, cited sources, and confidence score.
     """
     if not settings.GROQ_API_KEY:
         # Demo mode — rule-based responses without LLM
@@ -103,7 +127,7 @@ async def coach_chat(req: CoachRequest):
 
 
 def _demo_response(message: str) -> str:
-    """Rule-based fallback for demo/development without OpenAI key."""
+    """Rule-based fallback for demo/development without an API key."""
     msg = message.lower()
     if "food" in msg or "diet" in msg or "meat" in msg:
         return (
