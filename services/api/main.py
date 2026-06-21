@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from .core.config import settings
-from .routers import footprint, coach, ingestion, marketplace, scanner, nudge
+from core.config import settings
+from routers import footprint, coach, ingestion, marketplace, scanner, nudge
 
 app = FastAPI(
     title="Terraprint API",
