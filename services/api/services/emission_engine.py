@@ -9,7 +9,7 @@ import json
 import httpx
 from typing import Optional
 
-from ..core.config import settings
+from core.config import settings
 
 # ── DEFRA 2023 spend-based factors (kg CO2e per $1 spent) ────────────────────
 SPEND_FACTORS: dict[str, dict] = {
